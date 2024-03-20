@@ -53,7 +53,7 @@ where
 /// Two letters (usually ISO 3166-1) country code.
 // Some registries uses codes that are not ISO 3166-1 countries (for example RIPe uses 'EU'
 // as country), so we store that string as two bytes and not as for example isocountry::CountryCode.
-#[derive(PartialEq)]
+#[derive(Copy, Clone, PartialEq)]
 pub struct CountryCode([u8; 2]);
 
 impl FromStr for CountryCode {
@@ -124,7 +124,7 @@ impl<'de> Deserialize<'de> for CountryCode {
 
 /// https://tools.ietf.org/html/rfc7483#section-4.2
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Link {
     pub value: Option<String>,
     pub rel: Option<String>,
@@ -203,7 +203,7 @@ impl Serialize for Role {
 
 /// https://tools.ietf.org/html/rfc7483#section-4.8
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PublicId {
     #[serde(rename = "type")]
     pub typ: String,
@@ -260,7 +260,7 @@ impl Serialize for JCardItemDataType {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct JCardItem {
     pub property_name: String,
     pub parameters: serde_json::Map<String, serde_json::Value>,
@@ -339,7 +339,7 @@ impl Serialize for JCardItem {
 
 /// https://tools.ietf.org/html/rfc7095
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct JCard(JCardType, Vec<JCardItem>);
 
 impl JCard {
@@ -358,7 +358,7 @@ impl JCard {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Entity {
     pub handle: Option<String>,
@@ -493,7 +493,7 @@ impl From<String> for Status {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Clone, Serialize, Deserialize, Debug, Default)]
 pub struct IpAddresses {
     pub v4: Option<Vec<Ipv4Addr>>,
     pub v6: Option<Vec<Ipv6Addr>>,
@@ -501,7 +501,7 @@ pub struct IpAddresses {
 
 /// https://tools.ietf.org/html/rfc7483#section-5.2
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Nameserver {
     pub handle: Option<String>,
@@ -581,7 +581,7 @@ impl Serialize for EventAction {
 
 /// https://tools.ietf.org/html/rfc7483#section-4.5
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Event {
     pub event_actor: Option<String>,
@@ -592,7 +592,7 @@ pub struct Event {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Events(pub Vec<Event>);
 
 impl Events {
@@ -667,7 +667,7 @@ impl Serialize for NoticeOrRemarkType {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct NoticeOrRemark {
     pub title: Option<String>,
     #[serde(rename = "type")]
@@ -677,7 +677,7 @@ pub struct NoticeOrRemark {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct NoticesOrRemarks(Vec<NoticeOrRemark>);
 
 impl NoticesOrRemarks {
@@ -717,7 +717,7 @@ pub enum IpVersion {
 
 /// From 'cidr0' extension. https://bitbucket.org/nroecg/nro-rdap-cidr/src/master/nro-rdap-cidr.txt
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct CidrOCidr {
     pub v4prefix: Option<Ipv4Addr>,
     pub v6prefix: Option<Ipv6Addr>,
@@ -725,7 +725,7 @@ pub struct CidrOCidr {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct IpNetwork {
     pub handle: String,
@@ -757,7 +757,7 @@ pub struct IpNetwork {
 
 /// https://tools.ietf.org/html/rfc7483#section-5.5
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct AutNum {
     pub handle: String,
@@ -781,7 +781,7 @@ pub struct AutNum {
 
 /// https://tools.ietf.org/html/rfc7483#section-10.2.5
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "lowercase")]
 enum DomainVariantRelation {
     Registered,
@@ -794,7 +794,7 @@ enum DomainVariantRelation {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct VariantName {
     ldh_name: String,
@@ -802,7 +802,7 @@ pub struct VariantName {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Variant {
     relation: Vec<DomainVariantRelation>,
@@ -812,7 +812,7 @@ pub struct Variant {
 
 /// For field sizes see https://tools.ietf.org/html/rfc4034#section-5.1
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct DsData {
     key_tag: Option<u16>,
@@ -825,7 +825,7 @@ pub struct DsData {
 
 /// For field sizes see https://tools.ietf.org/html/rfc4034#section-2.1
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct KeyData {
     flags: u16,
@@ -837,7 +837,7 @@ pub struct KeyData {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct SecureDns {
     zone_signed: Option<bool>,
@@ -849,7 +849,7 @@ pub struct SecureDns {
 
 /// https://fred.nic.cz/rdap-extension/
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FredKeyset {
     pub links: Vec<Link>,
@@ -861,7 +861,7 @@ pub struct FredKeyset {
 
 /// https://fred.nic.cz/rdap-extension/
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct FredNsset {
     pub links: Vec<Link>,
@@ -872,7 +872,7 @@ pub struct FredNsset {
 
 /// https://tools.ietf.org/html/rfc7483#section-5.3
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Domain {
     pub handle: Option<String>,
@@ -900,7 +900,7 @@ pub struct Domain {
 
 /// https://tools.ietf.org/html/rfc7483.html#section-7
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Help {
     rdap_conformance: Option<Vec<String>>,
@@ -909,7 +909,7 @@ pub struct Help {
 
 // https://tools.ietf.org/html/rfc7483#section-8
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct EntitySearchResults {
     rdap_conformance: Option<Vec<String>>,
@@ -919,7 +919,7 @@ pub struct EntitySearchResults {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct DomainSearchResults {
     rdap_conformance: Option<Vec<String>>,
@@ -929,7 +929,7 @@ pub struct DomainSearchResults {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct NameserverSearchResults {
     rdap_conformance: Option<Vec<String>>,
@@ -939,7 +939,7 @@ pub struct NameserverSearchResults {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct ArinOriginas0OriginautnumsResults {
     rdap_conformance: Option<Vec<String>>,
@@ -986,7 +986,7 @@ where
 
 /// https://tools.ietf.org/html/rfc7483#section-6
 #[skip_serializing_none]
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Error {
     #[serde(deserialize_with = "deserialize_error_code")]
