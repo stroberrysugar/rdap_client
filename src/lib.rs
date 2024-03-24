@@ -152,41 +152,44 @@ impl Client {
         self.client.get(url).send().await?.json().await
     }
 
-    pub async fn fetch_bootstrap_asn(&self) -> Result<bootstrap::Asn, Box<dyn std::error::Error>> {
+    pub async fn fetch_bootstrap_asn(&self) -> Result<bootstrap::Asn, String> {
         let bootstrap = self
             .get_bootstrap("https://data.iana.org/rdap/asn.json")
-            .await?;
-        Ok(bootstrap::Asn::try_from(&bootstrap)?)
+            .await
+            .map_err(|e| e.to_string())?;
+        Ok(bootstrap::Asn::try_from(&bootstrap).map_err(|e| e.to_string())?)
     }
 
-    pub async fn fetch_bootstrap_dns(&self) -> Result<bootstrap::Dns, Box<dyn std::error::Error>> {
+    pub async fn fetch_bootstrap_dns(&self) -> Result<bootstrap::Dns, String> {
         let bootstrap = self
             .get_bootstrap("https://data.iana.org/rdap/dns.json")
-            .await?;
+            .await
+            .map_err(|e| e.to_string())?;
         Ok(bootstrap::Dns::from(&bootstrap))
     }
 
-    pub async fn fetch_bootstrap_ip(&self) -> Result<bootstrap::Ip, Box<dyn std::error::Error>> {
+    pub async fn fetch_bootstrap_ip(&self) -> Result<bootstrap::Ip, String> {
         let (parsed_ipv4, parsed_ipv6) = futures::join!(
             self.get_bootstrap("https://data.iana.org/rdap/ipv4.json"),
             self.get_bootstrap("https://data.iana.org/rdap/ipv6.json"),
         );
-        Ok(bootstrap::Ip::try_from((&parsed_ipv4?, &parsed_ipv6?))?)
+        Ok(bootstrap::Ip::try_from((
+            &parsed_ipv4.map_err(|e| e.to_string())?,
+            &parsed_ipv6.map_err(|e| e.to_string())?,
+        ))
+        .map_err(|e| e.to_string())?)
     }
 
-    pub async fn fetch_bootstrap_object_tags(
-        &self,
-    ) -> Result<bootstrap::ObjectTags, Box<dyn std::error::Error>> {
+    pub async fn fetch_bootstrap_object_tags(&self) -> Result<bootstrap::ObjectTags, String> {
         let bootstrap = self
             .get_bootstrap("https://data.iana.org/rdap/object-tags.json")
-            .await?;
+            .await
+            .map_err(|e| e.to_string())?;
         Ok(bootstrap::ObjectTags::from(&bootstrap))
     }
 
     /// Fetch bootstrap from IANA for ASN, IPv4 and IPV6, domains (DNS) and object tags.
-    pub async fn fetch_bootstrap(
-        &self,
-    ) -> Result<bootstrap::Bootstrap, Box<dyn std::error::Error>> {
+    pub async fn fetch_bootstrap(&self) -> Result<bootstrap::Bootstrap, String> {
         let (asn, dns, ip, object_tags) = futures::join!(
             self.fetch_bootstrap_asn(),
             self.fetch_bootstrap_dns(),
